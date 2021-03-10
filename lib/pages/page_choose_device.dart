@@ -24,7 +24,7 @@ class _PageChooseDeviceState extends State<PageChooseDevice> {
   void initState() {
     super.initState();
 
-  widget.bluetoothRepostiory.ble.scanResults.listen((List<ScanResult> results) {
+  widget.bluetoothRepostiory.scanSpecific().listen((List<ScanResult> results) {
       for (ScanResult result in results) {
         print(result.device.name);
         _addDeviceTolist(result.device);

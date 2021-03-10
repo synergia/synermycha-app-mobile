@@ -37,8 +37,19 @@ class BluetoothRepostiory {
   //   throw Exception("No Device Found");
   // }
 
-  Stream<List<ScanResult>> scanResults () {
+  Stream<List<ScanResult>> scanAll() {
     return ble.scanResults;
+  }
+
+  Stream<List<ScanResult>> scanSpecific() {
+    // var data = ble.scanResults.map((devices) => devices.where((device) => device.name == "SynerMycha")).toList();
+    return ble.scanResults
+        .map((s) => s.where((d) => isSynerMycha(d)).map((i) => i).toList());
+  }
+
+  bool isSynerMycha(ScanResult scanResult) {
+    print(scanResult.device.name);
+    return scanResult.device.name.contains("Syner");
   }
 
   Future<BluetoothDevice> _handleScaleConnected() async {
