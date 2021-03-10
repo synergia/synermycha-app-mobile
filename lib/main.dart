@@ -1,5 +1,7 @@
-import 'home_page.dart';
+// import 'home_page.dart';
 import 'package:flutter/material.dart';
+
+import 'pages/page_choose_device.dart';
 
 void main() {
   runApp(MyApp());
@@ -14,7 +16,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: HomePage(),
+      home: PageChooseDevice(),
     );
   }
 }

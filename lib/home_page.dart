@@ -46,9 +46,9 @@ class _HomePageState extends State<HomePage> {
                     setState(() {
                       _status = "Connecting";
                     });
-                    var scale = await _bluetoothRepostiory.connectScale();
+                    // var scale = await _bluetoothRepostiory.connectScale();
                     setState(() {
-                      _scale = scale;
+                      // _scale = scale;
                       _future = _scale.startDataStream();
                       _status = "Connected";
                     });
