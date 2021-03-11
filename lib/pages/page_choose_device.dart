@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:synermycha_app/smart_scale.dart';
-import 'package:synermycha_app/bluetooth_repository.dart';
+import 'package:synermycha_app/synermycha.dart';
+import 'package:synermycha_app/bluetooth_manager.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'page_device.dart';
 
@@ -8,14 +8,14 @@ class PageChooseDevice extends StatefulWidget {
   PageChooseDevice({Key key}) : super(key: key);
 
   final List<BluetoothDevice> devicesList = new List<BluetoothDevice>();
-  BluetoothRepostiory bluetoothRepostiory = BluetoothRepostiory();
+  BluetoothManager bluetoothManager = BluetoothManager();
 
   @override
   _PageChooseDeviceState createState() => _PageChooseDeviceState();
 }
 
 class _PageChooseDeviceState extends State<PageChooseDevice> {
-  SmartScale _scale;
+  // SmartScale _scale;
   Future _future;
   String _status = "Disconnected";
 
@@ -23,7 +23,7 @@ class _PageChooseDeviceState extends State<PageChooseDevice> {
   void initState() {
     super.initState();
 
-    widget.bluetoothRepostiory
+    widget.bluetoothManager
         .scanSpecific()
         .listen((List<ScanResult> results) {
       for (ScanResult result in results) {
@@ -31,7 +31,7 @@ class _PageChooseDeviceState extends State<PageChooseDevice> {
         _addDeviceTolist(result.device);
       }
     });
-    widget.bluetoothRepostiory.ble.startScan();
+    widget.bluetoothManager.ble.startScan();
   }
 
   _addDeviceTolist(final BluetoothDevice device) {
@@ -58,7 +58,7 @@ class _PageChooseDeviceState extends State<PageChooseDevice> {
                 context,
                 MaterialPageRoute(builder: (context) => PageDevice())
             );
-            widget.bluetoothRepostiory.connectToBLEDevice(device);
+            widget.bluetoothManager.connectToBLEDevice(device);
           },
         ),
       ));

@@ -1,8 +1,9 @@
-import 'smart_scale.dart';
+import 'synermycha.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 
-class BluetoothRepostiory {
+class BluetoothManager {
   final ble = FlutterBlue.instance;
+  SynerMycha synermycha;
 
   // Future<SmartScale> connectScale() async {
   //   BluetoothDevice bleDevice = await _handleScaleConnected();
@@ -37,11 +38,18 @@ class BluetoothRepostiory {
   //   throw Exception("No Device Found");
   // }
 
-  Future<void> connectToBLEDevice(BluetoothDevice synermycha) async {
+  Future<void> connectToBLEDevice(BluetoothDevice device) async {
     await ble.stopScan();
-    await _checkIfAlreadyConnected(synermycha);
-    await synermycha.connect(timeout: Duration(seconds: 10));
-    print("Connected to SynerMycha.");
+    BluetoothDevice synermycha_device = await _checkIfAlreadyConnected(device);
+
+    try {
+      await device.connect(timeout: Duration(seconds: 10));
+      synermycha = await SynerMycha.create(device: device);
+    } catch (e) {
+      if (e.code != 'already_connected') {
+        throw e;
+      }
+    }
   }
 
   Stream<List<ScanResult>> scanAll() {
@@ -49,7 +57,6 @@ class BluetoothRepostiory {
   }
 
   Stream<List<ScanResult>> scanSpecific() {
-    // var data = ble.scanResults.map((devices) => devices.where((device) => device.name == "SynerMycha")).toList();
     return ble.scanResults
         .map((s) => s.where((d) => isSynerMycha(d)).map((i) => i).toList());
   }
@@ -60,17 +67,17 @@ class BluetoothRepostiory {
   }
 
   Future<BluetoothDevice> _checkIfAlreadyConnected(
-      BluetoothDevice synermycha) async {
+      BluetoothDevice device) async {
     var connectedDevices = await ble.connectedDevices;
     if (connectedDevices.length > 0) {
-      var device = connectedDevices
-          .firstWhere((element) => connectedDevices.contains(synermycha));
-      if (device != null) {
-        print("SynerMycha is already connected.");
-        return device;
+      var synermycha = connectedDevices
+          .firstWhere((element) => connectedDevices.contains(device));
+      if (synermycha != null) {
+        print(synermycha.name + "is already connected.");
+        return synermycha;
       }
     }
-    print("SynerMycha is not connected.");
+    print(device.name + "is not connected.");
     return null;
   }
 

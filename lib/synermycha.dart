@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart' show required, debugPrint;
 import 'package:flutter_blue/flutter_blue.dart';
 
-class SmartScale {
+class SynerMycha {
   BluetoothDevice device;
   BluetoothCharacteristic _writeCharacteristic;
   BluetoothCharacteristic _notifyCharacteristic;
@@ -15,12 +15,12 @@ class SmartScale {
     return double.parse(weight);
   }
 
-  SmartScale._create({@required BluetoothDevice device}) {
+  SynerMycha._create({@required BluetoothDevice device}) {
     this.device = device;
   }
 
-  static Future<SmartScale> create({@required BluetoothDevice device}) async {
-    var object = SmartScale._create(device: device);
+  static Future<SynerMycha> create({@required BluetoothDevice device}) async {
+    var object = SynerMycha._create(device: device);
 
     await object._setup();
 
