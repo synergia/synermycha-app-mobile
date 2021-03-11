@@ -37,6 +37,13 @@ class BluetoothRepostiory {
   //   throw Exception("No Device Found");
   // }
 
+  Future<void> connectToBLEDevice(BluetoothDevice synermycha) async {
+    await ble.stopScan();
+    await _checkIfAlreadyConnected(synermycha);
+    await synermycha.connect(timeout: Duration(seconds: 10));
+    print("Connected to SynerMycha.");
+  }
+
   Stream<List<ScanResult>> scanAll() {
     return ble.scanResults;
   }
@@ -52,17 +59,18 @@ class BluetoothRepostiory {
     return scanResult.device.name.contains("Syner");
   }
 
-  Future<BluetoothDevice> _handleScaleConnected() async {
+  Future<BluetoothDevice> _checkIfAlreadyConnected(
+      BluetoothDevice synermycha) async {
     var connectedDevices = await ble.connectedDevices;
     if (connectedDevices.length > 0) {
       var device = connectedDevices
-          .firstWhere((element) => element.name.toLowerCase().contains("fake"));
+          .firstWhere((element) => connectedDevices.contains(synermycha));
       if (device != null) {
-        print("already connected");
+        print("SynerMycha is already connected.");
         return device;
       }
     }
-
+    print("SynerMycha is not connected.");
     return null;
   }
 
