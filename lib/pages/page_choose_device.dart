@@ -53,12 +53,12 @@ class _PageChooseDeviceState extends State<PageChooseDevice> {
         child: ListTile(
           title: Text(device.name == '' ? '(unknown device)' : device.name),
           subtitle: Text(device.id.toString()),
-          onTap: () {
+          onTap: () async {
+            widget.bluetoothManager.createSynerMycha(device);
             Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => PageDevice())
+                MaterialPageRoute(builder: (context) => PageDevice(bluetoothManager: widget.bluetoothManager))
             );
-            widget.bluetoothManager.connectToBLEDevice(device);
           },
         ),
       ));

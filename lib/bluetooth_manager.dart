@@ -38,9 +38,9 @@ class BluetoothManager {
   //   throw Exception("No Device Found");
   // }
 
-  Future<void> connectToBLEDevice(BluetoothDevice device) async {
+  Future<SynerMycha> connectToBLEDevice(BluetoothDevice device) async {
     await ble.stopScan();
-    BluetoothDevice synermycha_device = await _checkIfAlreadyConnected(device);
+    // BluetoothDevice synermycha_device = await _checkIfAlreadyConnected(device);
 
     try {
       await device.connect(timeout: Duration(seconds: 10));
@@ -50,6 +50,24 @@ class BluetoothManager {
         throw e;
       }
     }
+    return synermycha;
+  }
+
+  Future<SynerMycha> setupSynermycha() async {
+    try {
+      await synermycha.device.connect(timeout: Duration(seconds: 10));
+      await synermycha.setup();
+    } catch (e) {
+      if (e.code != 'already_connected') {
+        throw e;
+      }
+    }
+    return synermycha;
+  }
+
+  SynerMycha createSynerMycha(BluetoothDevice device) {
+    this.synermycha = SynerMycha.create(device: device);
+    return synermycha;
   }
 
   Stream<List<ScanResult>> scanAll() {
@@ -73,7 +91,7 @@ class BluetoothManager {
       var synermycha = connectedDevices
           .firstWhere((element) => connectedDevices.contains(device));
       if (synermycha != null) {
-        print(synermycha.name + "is already connected.");
+        print(synermycha.name + " is already connected.");
         return synermycha;
       }
     }

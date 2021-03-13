@@ -19,15 +19,19 @@ class SynerMycha {
     this.device = device;
   }
 
-  static Future<SynerMycha> create({@required BluetoothDevice device}) async {
+  static SynerMycha create({@required BluetoothDevice device}) {
     var object = SynerMycha._create(device: device);
 
-    await object._setup();
+    // await object._setup();
 
     return object;
   }
 
-  Future<void> _setup() async {
+  // Future<void> connect({Duration timeout, bool autoConnect = true,}) async {
+  //   return await this.device.connect(timeout: timeout);
+  // }
+
+  Future<void> setup() async {
     var services = await device?.discoverServices();
     print("nice");
 
