@@ -54,13 +54,18 @@ class BluetoothManager {
   }
 
   Future<SynerMycha> setupSynermycha() async {
+    if (await isAlreadyConnected(synermycha.device)) {
+      return synermycha;
+    }
+
     try {
       await synermycha.device.connect(timeout: Duration(seconds: 10));
       await synermycha.setup();
     } catch (e) {
-      if (e.code != 'already_connected') {
-        throw e;
-      }
+      // if (e) {
+      //   throw e;
+      // }
+      throw e;
     }
     return synermycha;
   }
@@ -75,8 +80,7 @@ class BluetoothManager {
   }
 
   Stream<List<ScanResult>> scanSpecific() {
-    return ble.scanResults
-        .map((s) => s.where((d) => isSynerMycha(d)).map((i) => i).toList());
+    return ble.scanResults.map((s) => s.where((d) => isSynerMycha(d)).map((i) => i).toList());
   }
 
   bool isSynerMycha(ScanResult scanResult) {
@@ -84,19 +88,17 @@ class BluetoothManager {
     return scanResult.device.name.contains("Syner");
   }
 
-  Future<BluetoothDevice> _checkIfAlreadyConnected(
-      BluetoothDevice device) async {
+  Future<bool> isAlreadyConnected(BluetoothDevice device) async {
     var connectedDevices = await ble.connectedDevices;
     if (connectedDevices.length > 0) {
-      var synermycha = connectedDevices
-          .firstWhere((element) => connectedDevices.contains(device));
+      var synermycha = connectedDevices.firstWhere((element) => connectedDevices.contains(device), orElse: () => null);
       if (synermycha != null) {
         print(synermycha.name + " is already connected.");
-        return synermycha;
+        return true;
       }
     }
     print(device.name + "is not connected.");
-    return null;
+    return false;
   }
 
   Future<void> getBluetoothPermission() async {

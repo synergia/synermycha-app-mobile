@@ -1,8 +1,13 @@
 import 'package:flutter/foundation.dart' show required, debugPrint;
 import 'package:flutter_blue/flutter_blue.dart';
+import 'package:synermycha_app/utils/ble_consts.dart';
 
 class SynerMycha {
   BluetoothDevice device;
+  List<BluetoothService> services = [];
+
+  BluetoothService serviceDeviceInfo;
+
   BluetoothCharacteristic _writeCharacteristic;
   BluetoothCharacteristic _notifyCharacteristic;
 
@@ -32,8 +37,12 @@ class SynerMycha {
   // }
 
   Future<void> setup() async {
-    var services = await device?.discoverServices();
-    print("nice");
+    services = await device?.discoverServices();
+
+    serviceDeviceInfo = await getService(BleUUIDs.SERV_DEVICE_INFO);
+
+    print(serviceDeviceInfo?.characteristics?.length);
+    print("DONE");
 
     // List<BluetoothCharacteristic> bluetoothCharacteristics =
     //     _getBluetoothCharacteristics(services: services);
@@ -45,27 +54,29 @@ class SynerMycha {
     //     bluetoothCharacteristics: bluetoothCharacteristics);
   }
 
-  List<BluetoothCharacteristic> _getBluetoothCharacteristics(
-      {@required List<BluetoothService> services}) {
-    var service = services.firstWhere((element) =>
-        element.uuid == Guid("0000ffb0-0000-1000-8000-00805f9b34fb"));
+  Future<BluetoothService> getService(String serviceUUID) async {
+    try {
+      final service = services.firstWhere((element) => element.uuid.toString().contains(serviceUUID), orElse: null);
+      return service;
+    } catch (e) {
+      print(e);
+      return null;
+    }
+  }
+
+  List<BluetoothCharacteristic> _getBluetoothCharacteristics({@required List<BluetoothService> services}) {
+    var service = services.firstWhere((element) => element.uuid == Guid("0000ffb0-0000-1000-8000-00805f9b34fb"));
     return service.characteristics;
   }
 
-  void _setupWriteCharacteristic(
-      {@required List<BluetoothCharacteristic> bluetoothCharacteristics}) {
-    _writeCharacteristic = bluetoothCharacteristics.firstWhere(
-        (characteristic) =>
-            characteristic.uuid ==
-            Guid("0000ffb1-0000-1000-8000-00805f9b34fb"));
+  void _setupWriteCharacteristic({@required List<BluetoothCharacteristic> bluetoothCharacteristics}) {
+    _writeCharacteristic = bluetoothCharacteristics
+        .firstWhere((characteristic) => characteristic.uuid == Guid("0000ffb1-0000-1000-8000-00805f9b34fb"));
   }
 
-  void _setupNotifyCharacteristic(
-      {@required List<BluetoothCharacteristic> bluetoothCharacteristics}) {
-    _notifyCharacteristic = bluetoothCharacteristics.firstWhere(
-        (characteristic) =>
-            characteristic.uuid ==
-            Guid("0000ffb2-0000-1000-8000-00805f9b34fb"));
+  void _setupNotifyCharacteristic({@required List<BluetoothCharacteristic> bluetoothCharacteristics}) {
+    _notifyCharacteristic = bluetoothCharacteristics
+        .firstWhere((characteristic) => characteristic.uuid == Guid("0000ffb2-0000-1000-8000-00805f9b34fb"));
   }
 
   Future<void> startDataStream() async {
@@ -90,8 +101,7 @@ class SynerMycha {
 
   void _updateWeightData(List<int> payload) {
     if (payload[2] >= 252) return;
-    if (payload[0] == 172 && payload[1] == 2)
-      _weight = [payload[3], payload[4]];
+    if (payload[0] == 172 && payload[1] == 2) _weight = [payload[3], payload[4]];
   }
 
   void _updateBodyFatData(List<int> payload) {}
@@ -105,14 +115,11 @@ class SynerMycha {
     }
   }
 
-  Future<void> _syncUserID() async => await _writeCharacteristic.write(
-      [0xAC, 0x02, 0xFB, 0x01, 0x1B, 0xAC, 0xCC, 0x71],
-      withoutResponse: true);
+  Future<void> _syncUserID() async =>
+      await _writeCharacteristic.write([0xAC, 0x02, 0xFB, 0x01, 0x1B, 0xAC, 0xCC, 0x71], withoutResponse: true);
 
   Future<void> _syncUserInformation() async {
-    await _writeCharacteristic.write(
-        [0xAC, 0x02, 0xFA, 0x01, 0x00, 0x00, 0xCC, 0x39],
-        withoutResponse: true);
+    await _writeCharacteristic.write([0xAC, 0x02, 0xFA, 0x01, 0x00, 0x00, 0xCC, 0x39], withoutResponse: true);
   }
 
   Future<void> _setMeasurementUnit() async {
@@ -126,16 +133,12 @@ class SynerMycha {
 
   Future<void> _synchronizeTime() async {
     final now = DateTime.now();
-    final checksum =
-        (253 + (now.year - 2000) + now.month + now.day + 204) % 255;
+    final checksum = (253 + (now.year - 2000) + now.month + now.day + 204) % 255;
 
     // try to sync date to current day, 18:00:00
 
-    await _writeCharacteristic
-        .write([0xAC, 0x02, 253, 21, 2, 24, 204, 8], withoutResponse: true);
-    await _writeCharacteristic.write(
-        [0xAC, 0x02, 0xFC, 0x12, 0x00, 0x00, 0xCC, 0x26],
-        withoutResponse: true);
+    await _writeCharacteristic.write([0xAC, 0x02, 253, 21, 2, 24, 204, 8], withoutResponse: true);
+    await _writeCharacteristic.write([0xAC, 0x02, 0xFC, 0x12, 0x00, 0x00, 0xCC, 0x26], withoutResponse: true);
 
     debugPrint("timesync sent");
   }
@@ -146,34 +149,12 @@ class SynerMycha {
   // regarding what exactly is happening
 
   Future<void> _initCMD() async {
+    await _writeCharacteristic.write([172, 0x02, 0xF7, 0x00, 0x00, 0x00, 0xCC, 0xC3], withoutResponse: true);
     await _writeCharacteristic.write(
-        [172, 0x02, 0xF7, 0x00, 0x00, 0x00, 0xCC, 0xC3],
+        [173, 0x01, 0xA2, 0x0F, 0xE6, 0x7E, 0x7D, 0x08, 0x4E, 0x68, 0xBE, 0x7F, 0x0E, 0x45, 0xDF, 0x61, 0xDC, 0x79],
         withoutResponse: true);
-    await _writeCharacteristic.write([
-      173,
-      0x01,
-      0xA2,
-      0x0F,
-      0xE6,
-      0x7E,
-      0x7D,
-      0x08,
-      0x4E,
-      0x68,
-      0xBE,
-      0x7F,
-      0x0E,
-      0x45,
-      0xDF,
-      0x61,
-      0xDC,
-      0x79
-    ], withoutResponse: true);
-    await _writeCharacteristic
-        .write([0xAE, 0x03, 0x02, 0x04, 0x01, 0x07], withoutResponse: true);
-    await _writeCharacteristic.write(
-        [0xAC, 0x02, 0xFE, 0x1E, 0x00, 0x00, 0xCC, 0xE8],
-        withoutResponse: true);
+    await _writeCharacteristic.write([0xAE, 0x03, 0x02, 0x04, 0x01, 0x07], withoutResponse: true);
+    await _writeCharacteristic.write([0xAC, 0x02, 0xFE, 0x1E, 0x00, 0x00, 0xCC, 0xE8], withoutResponse: true);
   }
 
   Future<void> dispose() async {
