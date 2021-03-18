@@ -1,12 +1,13 @@
 import 'package:flutter/foundation.dart' show required, debugPrint;
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:synermycha_app/utils/ble_consts.dart';
+import 'device_info.dart';
 
 class SynerMycha {
   BluetoothDevice device;
   List<BluetoothService> services = [];
 
-  BluetoothService serviceDeviceInfo;
+  DeviceInfo deviceInfo = DeviceInfo();
 
   BluetoothCharacteristic _writeCharacteristic;
   BluetoothCharacteristic _notifyCharacteristic;
@@ -39,10 +40,12 @@ class SynerMycha {
   Future<void> setup() async {
     services = await device?.discoverServices();
 
-    serviceDeviceInfo = await getService(BleUUIDs.SERV_DEVICE_INFO);
+    deviceInfo.service = await getService(services, BleUUIDs.SERV_DEVICE_INFO);
+    final firmwareRev = await deviceInfo.firmwareRevision;
+    final softwareRev = await deviceInfo.softwareRevision;
 
-    print(serviceDeviceInfo?.characteristics?.length);
-    print("DONE");
+    print(firmwareRev);
+    print(softwareRev);
 
     // List<BluetoothCharacteristic> bluetoothCharacteristics =
     //     _getBluetoothCharacteristics(services: services);
@@ -54,7 +57,7 @@ class SynerMycha {
     //     bluetoothCharacteristics: bluetoothCharacteristics);
   }
 
-  Future<BluetoothService> getService(String serviceUUID) async {
+  Future<BluetoothService> getService(List<BluetoothService> services, String serviceUUID) async {
     try {
       final service = services.firstWhere((element) => element.uuid.toString().contains(serviceUUID), orElse: null);
       return service;
@@ -62,11 +65,6 @@ class SynerMycha {
       print(e);
       return null;
     }
-  }
-
-  List<BluetoothCharacteristic> _getBluetoothCharacteristics({@required List<BluetoothService> services}) {
-    var service = services.firstWhere((element) => element.uuid == Guid("0000ffb0-0000-1000-8000-00805f9b34fb"));
-    return service.characteristics;
   }
 
   void _setupWriteCharacteristic({@required List<BluetoothCharacteristic> bluetoothCharacteristics}) {

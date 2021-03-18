@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:synermycha_app/synermycha.dart';
+import 'package:synermycha_app/device/synermycha.dart';
 import 'package:synermycha_app/bluetooth_manager.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'page_device.dart';

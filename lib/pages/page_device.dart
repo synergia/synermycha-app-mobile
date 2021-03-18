@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/gen/flutterblue.pbserver.dart';
 import 'package:synermycha_app/bluetooth_manager.dart';
-import 'package:synermycha_app/synermycha.dart';
+import 'package:synermycha_app/device/synermycha.dart';
 
 class PageDevice extends StatelessWidget {
   final BluetoothManager bluetoothManager;

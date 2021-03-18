@@ -1,4 +1,4 @@
-import 'synermycha.dart';
+import 'device/synermycha.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 
 class BluetoothManager {
@@ -44,7 +44,7 @@ class BluetoothManager {
 
     try {
       await device.connect(timeout: Duration(seconds: 10));
-      synermycha = await SynerMycha.create(device: device);
+      synermycha = SynerMycha.create(device: device);
     } catch (e) {
       if (e.code != 'already_connected') {
         throw e;
