@@ -59,7 +59,7 @@ class BluetoothManager {
     }
 
     try {
-      await synermycha.device.connect(timeout: Duration(seconds: 10));
+      await synermycha.device.connect(timeout: Duration(seconds: 10), autoConnect: false);
       await synermycha.setup();
     } catch (e) {
       // if (e) {

@@ -23,9 +23,7 @@ class _PageChooseDeviceState extends State<PageChooseDevice> {
   void initState() {
     super.initState();
 
-    widget.bluetoothManager
-        .scanSpecific()
-        .listen((List<ScanResult> results) {
+    widget.bluetoothManager.scanSpecific().listen((List<ScanResult> results) {
       for (ScanResult result in results) {
         print(result.device.name);
         _addDeviceTolist(result.device);
@@ -43,8 +41,7 @@ class _PageChooseDeviceState extends State<PageChooseDevice> {
   }
 
   @override
-  Widget build(BuildContext context) =>
-      Scaffold(body: _buildListViewOfDevices());
+  Widget build(BuildContext context) => Scaffold(body: _buildListViewOfDevices());
 
   ListView _buildListViewOfDevices() {
     List<Card> listTiles = [];
@@ -55,10 +52,8 @@ class _PageChooseDeviceState extends State<PageChooseDevice> {
           subtitle: Text(device.id.toString()),
           onTap: () async {
             widget.bluetoothManager.createSynerMycha(device);
-            Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => PageDevice(bluetoothManager: widget.bluetoothManager))
-            );
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => PageDevice(bluetoothManager: widget.bluetoothManager)));
           },
         ),
       ));
@@ -71,7 +66,6 @@ class _PageChooseDeviceState extends State<PageChooseDevice> {
     );
   }
 }
-
 
 class ListTileDevice extends StatelessWidget {
   @override
