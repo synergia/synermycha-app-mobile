@@ -48,7 +48,6 @@ class SynerMycha {
     print(softwareRev);
     print(manuName);
 
-
     // List<BluetoothCharacteristic> bluetoothCharacteristics =
     //     _getBluetoothCharacteristics(services: services);
 

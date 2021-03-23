@@ -39,13 +39,7 @@ class PageDevice extends StatelessWidget {
           ),
           title: InkWell(
             onTap: () {
-              showDialog(
-                  context: context,
-                  builder: (ctxt) => new AlertDialog(
-                    title: Text("Device information"),
-                    // content: Text(synermycha.deviceInfo.softwareRevision),
-                  )
-              );
+              _fetchDeviceInfo(context, synermycha);
             },
             child: Text(
               synermycha.device.name,
@@ -54,6 +48,58 @@ class PageDevice extends StatelessWidget {
           )),
       body: Center(),
     );
+  }
+
+  Future<void> _fetchDeviceInfo(context, SynerMycha synermycha) async {
+    final firmwareRev = await synermycha.deviceInfo.firmwareRevision;
+    final softwareRev = await synermycha.deviceInfo.softwareRevision;
+    final manuName = await synermycha.deviceInfo.manufacturerName;
+    final hardwareRev = await synermycha.deviceInfo.hardwareRevision;
+
+    showDialog(
+        context: context,
+        builder: (ctxt) => new SimpleDialog(
+              title: Text("Device information"),
+              children: [
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsetsDirectional.only(start: 16.0),
+                        child: Text("Manufacturer: " + manuName),
+                      ),
+                    ]),
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsetsDirectional.only(start: 16.0),
+                        child: Text("Software rev.: " + softwareRev),
+                      ),
+                    ]),
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsetsDirectional.only(start: 16.0),
+                        child: Text("Firmware rev.: " + firmwareRev),
+                      ),
+                    ]),
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsetsDirectional.only(start: 16.0),
+                        child: Text("Hardware rev.: " + hardwareRev),
+                      ),
+                    ])
+              ],
+              // content: Text(synermycha.deviceInfo.softwareRevision),
+            ));
   }
 
   Widget _loadingView() {
