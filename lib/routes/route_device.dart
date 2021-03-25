@@ -3,11 +3,11 @@ import 'package:flutter_blue/gen/flutterblue.pbserver.dart';
 import 'package:synermycha_app/bluetooth_manager.dart';
 import 'package:synermycha_app/device/synermycha.dart';
 
-class PageDevice extends StatelessWidget {
+class RouteDevice extends StatelessWidget {
   final BluetoothManager bluetoothManager;
   // final BluetoothDevice synermycha;
 
-  PageDevice({Key key, @required this.bluetoothManager}) : super(key: key);
+  RouteDevice({Key key, @required this.bluetoothManager}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return new FutureBuilder<SynerMycha>(
@@ -48,6 +48,35 @@ class PageDevice extends StatelessWidget {
             ),
           )),
       body: Center(),
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        backgroundColor: Colors.purple.shade900,
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.white.withOpacity(.60),
+        selectedFontSize: 14,
+        unselectedFontSize: 14,
+        onTap: (value) {
+          // Respond to item press.
+        },
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.favorite),
+            label: 'Favorites',
+          ),
+          BottomNavigationBarItem(
+            label: 'Music',
+            icon: Icon(Icons.music_note),
+          ),
+          BottomNavigationBarItem(
+            label: 'Places',
+            icon: Icon(Icons.location_on),
+          ),
+          BottomNavigationBarItem(
+            label: 'News',
+            icon: Icon(Icons.library_books),
+          ),
+        ],
+      ),
     );
   }
 
@@ -55,7 +84,7 @@ class PageDevice extends StatelessWidget {
     showDialog(
         context: context,
         builder: (ctxt) => new SimpleDialog(
-              title: Text("Device information"),
+              title: Text("SynerMycha information"),
               children: [
                 Row(
                     mainAxisAlignment: MainAxisAlignment.start,

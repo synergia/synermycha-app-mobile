@@ -2,19 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:synermycha_app/device/synermycha.dart';
 import 'package:synermycha_app/bluetooth_manager.dart';
 import 'package:flutter_blue/flutter_blue.dart';
-import 'page_device.dart';
+import 'route_device.dart';
 
-class PageChooseDevice extends StatefulWidget {
-  PageChooseDevice({Key key}) : super(key: key);
+class RouteChooseDevice extends StatefulWidget {
+  RouteChooseDevice({Key key}) : super(key: key);
 
-  final List<BluetoothDevice> devicesList = new List<BluetoothDevice>();
+  final List<BluetoothDevice> devicesList = [];
   BluetoothManager bluetoothManager = BluetoothManager();
 
   @override
-  _PageChooseDeviceState createState() => _PageChooseDeviceState();
+  _RouteChooseDeviceState createState() => _RouteChooseDeviceState();
 }
 
-class _PageChooseDeviceState extends State<PageChooseDevice> {
+class _RouteChooseDeviceState extends State<RouteChooseDevice> {
   // SmartScale _scale;
   Future _future;
   String _status = "Disconnected";
@@ -53,7 +53,7 @@ class _PageChooseDeviceState extends State<PageChooseDevice> {
           onTap: () async {
             widget.bluetoothManager.createSynerMycha(device);
             Navigator.push(context,
-                MaterialPageRoute(builder: (context) => PageDevice(bluetoothManager: widget.bluetoothManager)));
+                MaterialPageRoute(builder: (context) => RouteDevice(bluetoothManager: widget.bluetoothManager)));
           },
         ),
       ));
