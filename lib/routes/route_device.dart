@@ -3,15 +3,55 @@ import 'package:flutter_blue/gen/flutterblue.pbserver.dart';
 import 'package:synermycha_app/bluetooth_manager.dart';
 import 'package:synermycha_app/device/synermycha.dart';
 
-class RouteDevice extends StatelessWidget {
-  final BluetoothManager bluetoothManager;
-  // final BluetoothDevice synermycha;
+class RouteDevice extends StatefulWidget {
+  const RouteDevice({Key key, @required this.bluetoothManager}) : super(key: key);
 
-  RouteDevice({Key key, @required this.bluetoothManager}) : super(key: key);
+  final BluetoothManager bluetoothManager;
+
+  @override
+  _RouteDeviceState createState() => _RouteDeviceState();
+}
+
+class _RouteDeviceState extends State<RouteDevice> {
+  int _selectedIndex = 0;
+  final _pageViewController = PageController();
+
+  static const TextStyle optionStyle = TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
+  static const List<Widget> _widgetOptions = <Widget>[
+    Text(
+      'Telemetry',
+      style: optionStyle,
+    ),
+    Text(
+      'Map',
+      style: optionStyle,
+    ),
+    Text(
+      'Lights',
+      style: optionStyle,
+    ),
+    Text(
+      'Settings',
+      style: optionStyle,
+    ),
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  @override
+  void dispose() {
+    _pageViewController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return new FutureBuilder<SynerMycha>(
-        future: bluetoothManager.setupSynermycha(),
+        future: widget.bluetoothManager.setupSynermycha(), //TODO: Move this to choose device
         builder: (context, AsyncSnapshot<SynerMycha> snapshot) {
           if (snapshot.hasData) {
             return _buildView(context, snapshot.data);
@@ -47,7 +87,14 @@ class RouteDevice extends StatelessWidget {
               style: TextStyle(color: Colors.black),
             ),
           )),
-      body: Center(),
+      body: Center(child: PageView(
+        controller: _pageViewController,
+        children: _widgetOptions,
+        onPageChanged: _onItemTapped,
+      )),
+      // Center(
+      //   child: _widgetOptions.elementAt(_selectedIndex),
+      // )
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         backgroundColor: Colors.purple.shade900,
@@ -55,27 +102,28 @@ class RouteDevice extends StatelessWidget {
         unselectedItemColor: Colors.white.withOpacity(.60),
         selectedFontSize: 14,
         unselectedFontSize: 14,
-        onTap: (value) {
-          // Respond to item press.
+        onTap: (index) {
+          _pageViewController.animateToPage(index, duration: Duration(milliseconds: 200), curve: Curves.bounceOut);
         },
         items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
-            label: 'Favorites',
+            icon: Icon(Icons.show_chart),
+            label: 'Telemetry',
           ),
           BottomNavigationBarItem(
-            label: 'Music',
-            icon: Icon(Icons.music_note),
+            label: 'Map',
+            icon: Icon(Icons.map_outlined),
           ),
           BottomNavigationBarItem(
-            label: 'Places',
-            icon: Icon(Icons.location_on),
+            label: 'Lights',
+            icon: Icon(Icons.lightbulb_outline),
           ),
           BottomNavigationBarItem(
-            label: 'News',
-            icon: Icon(Icons.library_books),
+            label: 'Settings',
+            icon: Icon(Icons.settings),
           ),
         ],
+        currentIndex: _selectedIndex,
       ),
     );
   }
