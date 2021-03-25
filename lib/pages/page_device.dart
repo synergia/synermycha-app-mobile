@@ -23,7 +23,7 @@ class PageDevice extends StatelessWidget {
         });
   }
 
-  Widget _buildView(context, synermycha) {
+  Widget _buildView(context, SynerMycha synermycha) {
     return Scaffold(
       appBar: AppBar(
           backgroundColor: Colors.transparent,
@@ -39,6 +39,7 @@ class PageDevice extends StatelessWidget {
           ),
           title: InkWell(
             onTap: () {
+              print(synermycha.deviceInfo.softwareRevision);
               _fetchDeviceInfo(context, synermycha);
             },
             child: Text(
@@ -50,12 +51,7 @@ class PageDevice extends StatelessWidget {
     );
   }
 
-  Future<void> _fetchDeviceInfo(context, SynerMycha synermycha) async {
-    final firmwareRev = await synermycha.deviceInfo.firmwareRevision;
-    final softwareRev = await synermycha.deviceInfo.softwareRevision;
-    final manuName = await synermycha.deviceInfo.manufacturerName;
-    final hardwareRev = await synermycha.deviceInfo.hardwareRevision;
-
+  void _fetchDeviceInfo(context, SynerMycha synermycha) {
     showDialog(
         context: context,
         builder: (ctxt) => new SimpleDialog(
@@ -67,7 +63,7 @@ class PageDevice extends StatelessWidget {
                     children: [
                       Padding(
                         padding: const EdgeInsetsDirectional.only(start: 16.0),
-                        child: Text("Manufacturer: " + manuName),
+                        child: Text("Manufacturer: " + synermycha.deviceInfo.manufacturerName),
                       ),
                     ]),
                 Row(
@@ -76,7 +72,7 @@ class PageDevice extends StatelessWidget {
                     children: [
                       Padding(
                         padding: const EdgeInsetsDirectional.only(start: 16.0),
-                        child: Text("Software rev.: " + softwareRev),
+                        child: Text("Software rev.: " + synermycha.deviceInfo.softwareRevision),
                       ),
                     ]),
                 Row(
@@ -85,7 +81,7 @@ class PageDevice extends StatelessWidget {
                     children: [
                       Padding(
                         padding: const EdgeInsetsDirectional.only(start: 16.0),
-                        child: Text("Firmware rev.: " + firmwareRev),
+                        child: Text("Firmware rev.: " + synermycha.deviceInfo.firmwareRevision),
                       ),
                     ]),
                 Row(
@@ -94,7 +90,7 @@ class PageDevice extends StatelessWidget {
                     children: [
                       Padding(
                         padding: const EdgeInsetsDirectional.only(start: 16.0),
-                        child: Text("Hardware rev.: " + hardwareRev),
+                        child: Text("Hardware rev.: " + synermycha.deviceInfo.hardwareRevision),
                       ),
                     ])
               ],

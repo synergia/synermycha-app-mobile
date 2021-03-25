@@ -41,12 +41,8 @@ class SynerMycha {
     services = await device?.discoverServices();
 
     deviceInfo.service = await getService(services, BleUUIDs.SERV_DEVICE_INFO);
-    final firmwareRev = await deviceInfo.firmwareRevision;
-    final softwareRev = await deviceInfo.softwareRevision;
-    final manuName = await deviceInfo.manufacturerName;
-    print(firmwareRev);
-    print(softwareRev);
-    print(manuName);
+    deviceInfo.refresh();
+
 
     // List<BluetoothCharacteristic> bluetoothCharacteristics =
     //     _getBluetoothCharacteristics(services: services);
