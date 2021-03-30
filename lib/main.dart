@@ -1,71 +1,22 @@
+// import 'home_page.dart';
 import 'package:flutter/material.dart';
-import 'dart:convert';
-import 'dart:developer';
-import 'dart:collection';
-import 'dart:async' show Future;
-import 'package:flutter/services.dart' show rootBundle;
-import 'package:numberpicker/numberpicker.dart';
-import 'package:provider/provider.dart';
-import 'bluetoothManager.dart';
-import 'connectionIndicator.dart';
-import "config.dart";
-import "bluetoothConfig.dart";
-import 'drawer.dart';
+
+import 'routes/route_choose_device.dart';
 
 void main() {
-  runApp(MultiProvider(
-    providers: [
-      ListenableProvider<BluetoothManager>(create: (_) => BluetoothManager()),
-    ],
-    child: MaterialApp(
-      title: 'Navigation Basics',
-      home: HomeScreen(),
-    ),
-  ));
+  runApp(MyApp());
 }
 
-class HomeScreen extends StatelessWidget {
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Row(children: [Text("status: "), ConnectionIndicator()]),
+    return MaterialApp(
+      title: 'SynerMycha',
+      theme: ThemeData(
+        primarySwatch: Colors.deepPurple,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      body: Center(child: const Text('Press the button below!')),
-      floatingActionButton: Consumer<BluetoothManager>(
-        builder: (context, btman, child) {
-          return FloatingActionButton(
-              child: Icon(Icons.send),
-              onPressed: () => btman.writeData("YOLO"),
-              backgroundColor: Colors.red,
-            );
-        },
-      ),
-      drawer: Drawer(
-        // Add a ListView to the drawer. This ensures the user can scroll
-        // through the options in the drawer if there isn't enough vertical
-        // space to fit everything.
-        child: WidgetDrawer(),
-      ),
-    );
-  }
-}
-
-class AppConfigurationMenu extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("AppConfigurationMenu"),
-      ),
-      body: Center(
-        child: RaisedButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          child: Text('Go back!'),
-        ),
-      ),
+      home: RouteChooseDevice(),
     );
   }
 }
