@@ -48,19 +48,28 @@ class _RouteDeviceState extends State<RouteDevice> {
     super.dispose();
   }
 
+  void initState() {
+    super.initState();
+    // _showDialog();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return new FutureBuilder<SynerMycha>(
-        future: widget.bluetoothManager.setupSynermycha(), //TODO: Move this to choose device
-        builder: (context, AsyncSnapshot<SynerMycha> snapshot) {
-          if (snapshot.hasData) {
-            return _buildView(context, snapshot.data);
-          } else if (snapshot.hasError) {
-            return Text("${snapshot.error}");
-          }
-          // By default, show a loading spinner
-          return _loadingView();
-        });
+    // if (widget.bluetoothManager.synermycha == null) {
+      return new FutureBuilder<SynerMycha>(
+          future: widget.bluetoothManager.setupSynermycha(), //TODO: Move this to choose device
+          builder: (context, AsyncSnapshot<SynerMycha> snapshot) {
+            if (snapshot.hasData) {
+              return _buildView(context, snapshot.data);
+            } else if (snapshot.hasError) {
+              return Text("${snapshot.error}");
+            }
+            // By default, show a loading spinner
+            return _loadingView();
+          });
+    // } else {
+    //   return _buildView(context, widget.bluetoothManager.synermycha);
+    // }
   }
 
   Widget _buildView(context, SynerMycha synermycha) {
@@ -73,7 +82,7 @@ class _RouteDeviceState extends State<RouteDevice> {
             tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
             icon: const Icon(Icons.close),
             onPressed: () {
-              synermycha.device.disconnect();
+              widget.bluetoothManager.closeSynermycha();
               Navigator.pop(context);
             },
           ),
@@ -87,7 +96,8 @@ class _RouteDeviceState extends State<RouteDevice> {
               style: TextStyle(color: Colors.black),
             ),
           )),
-      body: Center(child: PageView(
+      body: Center(
+          child: PageView(
         controller: _pageViewController,
         children: _widgetOptions,
         onPageChanged: _onItemTapped,

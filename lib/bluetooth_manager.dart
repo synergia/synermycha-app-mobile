@@ -70,6 +70,11 @@ class BluetoothManager {
     return synermycha;
   }
 
+  void closeSynermycha() async {
+    await synermycha.device.disconnect();
+    synermycha = null;
+  }
+
   SynerMycha createSynerMycha(BluetoothDevice device) {
     this.synermycha = SynerMycha.create(device: device);
     return synermycha;
