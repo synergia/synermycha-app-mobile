@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_blue/gen/flutterblue.pbserver.dart';
 import 'package:synermycha_app/bluetooth_manager.dart';
 import 'package:synermycha_app/device/synermycha.dart';
+import 'package:synermycha_app/views/view_telemetry.dart';
 
 class RouteDevice extends StatefulWidget {
   const RouteDevice({Key key, @required this.bluetoothManager}) : super(key: key);
@@ -17,11 +17,8 @@ class _RouteDeviceState extends State<RouteDevice> {
   final _pageViewController = PageController();
 
   static const TextStyle optionStyle = TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-  static const List<Widget> _widgetOptions = <Widget>[
-    Text(
-      'Telemetry',
-      style: optionStyle,
-    ),
+  static List<Widget> _widgetOptions = <Widget>[
+    ViewTelemetry(),
     Text(
       'Map',
       style: optionStyle,
